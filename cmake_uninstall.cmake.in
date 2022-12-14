@@ -9,36 +9,38 @@ string( REGEX REPLACE "\n" ";" files "${files}" )
 foreach( file ${files} )
 	# Remove File
 	message( STATUS "Uninstalling $ENV{DESTDIR}${file}" )
+	list( APPEND CMAKE_MESSAGE_INDENT "   " )
 	if( EXISTS "$ENV{DESTDIR}${file}" )
-		execute_process(
-			COMMAND "@CMAKE_COMMAND@" -E rm "$ENV{DESTDIR}${file}"
-			RESULT_VARIABLE rm_retval
-			ERROR_VARIABLE rm_error
-		)
+		message( CHECK_START "Removing File: $ENV{DESTDIR}${file}" )
+		file( REMOVE "$ENV{DESTDIR}${file}" )
 
-		if( NOT "${rm_retval}" STREQUAL 0 )
-			message( FATAL_ERROR "${rm_error}" )
+		if( EXISTS "$ENV{DESTDIR}${file}" )
+			message( CHECK_FAIL "FAILED" )
+		else()
+			message( CHECK_PASS "DONE" )
 		endif()
 	else()
 		message( NOTICE "FILE NOT FOUND : $ENV{DESTDIR}${file}" )
 	endif()
 
 	#Trim Directory Tree
-	while( NOT FALSE )
+	while( NOT FALSE ) #< XXX: CMake H4x: Can't use constant TRUE
 		string( REGEX REPLACE "^(.*)/[^/]*$" "\\1" file ${file} )
 		if( "${file}" STREQUAL "" )
 			break()
 		endif()
-		file( GLOB filelist LIST_DIRECTORIES true "${file}/*" )
+		file( GLOB filelist LIST_DIRECTORIES true "$ENV{DESTDIR}${file}/*" )
 		if( "${filelist}" STREQUAL "" )
-			message( CHECK_START "Triming Directory: ${file}" )
-			file( REMOVE_RECURSE "${file}" )
-			if( EXISTS "${file}" )
+			message( CHECK_START "Triming Directory: $ENV{DESTDIR}${file}" )
+			file( REMOVE_RECURSE "$ENV{DESTDIR}${file}" )
+
+			if( EXISTS "$ENV{DESTDIR}${file}" )
 				message( CHECK_FAIL "FAILED" )
 			else()
 				message( CHECK_PASS "DONE" )
 			endif()
 		endif()
 	endwhile()
+	list( POP_BACK CMAKE_MESSAGE_INDENT )
 endforeach()
 
