@@ -23,6 +23,22 @@ foreach( file ${files} )
 		message( NOTICE "FILE NOT FOUND : $ENV{DESTDIR}${file}" )
 	endif()
 
-	#TODO: Trim Directory
+	#Trim Directory Tree
+	while( NOT FALSE )
+		string( REGEX REPLACE "^(.*)/[^/]*$" "\\1" file ${file} )
+		if( "${file}" STREQUAL "" )
+			break()
+		endif()
+		file( GLOB filelist LIST_DIRECTORIES true "${file}/*" )
+		if( "${filelist}" STREQUAL "" )
+			message( CHECK_START "Triming Directory: ${file}" )
+			file( REMOVE_RECURSE "${file}" )
+			if( EXISTS "${file}" )
+				message( CHECK_FAIL "FAILED" )
+			else()
+				message( CHECK_PASS "DONE" )
+			endif()
+		endif()
+	endwhile()
 endforeach()
 
