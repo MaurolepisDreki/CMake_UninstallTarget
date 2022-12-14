@@ -1,0 +1,28 @@
+# CMake uninstall routine
+
+if( NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt" )
+	message( FATAL_ERROR "FILE NOT FOUND : install_manifest.txt" )
+endif()
+
+file( READ "@CMAKE_BINARY_DIR@/install_manifest.txt" files )
+string( REGEX REPLACE "\n" ";" files "${files}" )
+foreach( file ${files} )
+	# Remove File
+	message( STATUS "Uninstalling $ENV{DESTDIR}${file}" )
+	if( EXISTS "$ENV{DESTDIR}${file}" )
+		execute_process(
+			COMMAND "@CMAKE_COMMAND@" -E rm "$ENV{DESTDIR}${file}"
+			RESULT_VARIABLE rm_retval
+			ERROR_VARIABLE rm_error
+		)
+
+		if( NOT "${rm_retval}" STREQUAL 0 )
+			message( FATAL_ERROR "${rm_error}" )
+		endif()
+	else()
+		message( NOTICE "FILE NOT FOUND : $ENV{DESTDIR}${file}" )
+	endif()
+
+	#TODO: Trim Directory
+endforeach()
+
