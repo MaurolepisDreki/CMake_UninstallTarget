@@ -5,7 +5,7 @@ project( "CMake Uninstall"
 	LANGUAGES NONE )
 
 include( GNUInstallDirs )
-list( APPEND CMAKE_MODULE_PATH "." )
+list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}" )
 include( UninstallTarget )
 
 
