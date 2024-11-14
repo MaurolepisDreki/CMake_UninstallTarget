@@ -3,7 +3,7 @@
 include_guard( GLOBAL )
 
 # Locate uninstall template and process
-foreach( path IN ITEMS "${CMAKE_CURRENT_LIST_DIR}" "/usr/local/share/cmake" "/usr/share/cmake" )
+foreach( path IN ITEMS "${CMAKE_CURRENT_LIST_DIR}" "/usr/local/share/cmake/Modules/UninstallTarget" "/usr/share/cmake/Modules/UninstallTarget" )
 	if( EXISTS "${path}/cmake_uninstall.cmake.in" )
 		configure_file( "${path}/cmake_uninstall.cmake.in" "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake" @ONLY )
 		break()
